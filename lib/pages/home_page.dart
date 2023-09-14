@@ -13,6 +13,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  @override
+  void initState() {
+    Provider.of<ExpenseData>(context,listen: false).prepareData();
+    
+    super.initState();
+  }
+
   // expense text controller
   final expenseNameController = TextEditingController();
   final expenseAmountController = TextEditingController();
