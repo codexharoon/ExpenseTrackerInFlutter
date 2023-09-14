@@ -2,6 +2,7 @@ import 'package:expense_tracker/componenets/expense_summary.dart';
 import 'package:expense_tracker/data/expense_data.dart';
 import 'package:expense_tracker/models/expense_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     Provider.of<ExpenseData>(context,listen: false).prepareData();
-    
+
     super.initState();
   }
 
@@ -93,7 +94,12 @@ class _HomePageState extends State<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Amount should be in Nuumbers or Decimals!'),));
       }
     }
-    
+  }
+
+
+  // delete expense item
+  void deleteExpenseItem(ExpenseItem expense){
+    Provider.of<ExpenseData>(context,listen: false).deleteExpense(expense);
   }
 
 
@@ -111,10 +117,23 @@ class _HomePageState extends State<HomePage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: value.getOverallExpenseList().length,
-              itemBuilder: (context,index) => ListTile(
-                title: Text(value.getOverallExpenseList()[index].name),
-                subtitle: Text('${value.getOverallExpenseList()[index].dateTime.day}/${value.getOverallExpenseList()[index].dateTime.month}/${value.getOverallExpenseList()[index].dateTime.year}'),
-                trailing: Text("\$${value.getOverallExpenseList()[index].amount}"),
+              itemBuilder: (context,index) => Slidable(
+                endActionPane: ActionPane(  
+                  motion: const StretchMotion(),
+                  children: [
+                    SlidableAction(
+                      onPressed: (context) => deleteExpenseItem(value.getOverallExpenseList()[index]),
+                      icon: Icons.delete,
+                      backgroundColor: Colors.red.shade400,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ],
+                ),
+                child: ListTile(
+                  title: Text(value.getOverallExpenseList()[index].name),
+                  subtitle: Text('${value.getOverallExpenseList()[index].dateTime.day}/${value.getOverallExpenseList()[index].dateTime.month}/${value.getOverallExpenseList()[index].dateTime.year}'),
+                  trailing: Text("\$${value.getOverallExpenseList()[index].amount}"),
+                ),
               ),
             ),
           ],
